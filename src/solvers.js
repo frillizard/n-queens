@@ -49,7 +49,6 @@ window.countNRooksSolutions = function(n) {
     if (rowIndex >= n || availableColumns.length === 0) {
       return;
     }
-
     // for each of the available column indices:
     availableColumns.forEach(function (columnIndex) {
       // slice passed in matrix so it is not mutated, and can be accessed by all iterations of forEach
@@ -70,18 +69,11 @@ window.countNRooksSolutions = function(n) {
     });
   }
 
-
-
-
-  // call helper function
   addRooks((new Board({n})).rows(), 0, _.range(n));
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
-
-
-
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
@@ -91,60 +83,33 @@ window.findNQueensSolution = function(n) {
   return solution;
 };
 
-
-
-
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
   if (n === 0) {
     return 1;
   } 
-
-  // let solutions = [];
   let solutionCount = 0;
-  // define helper function
   let addQueens = function(board, rowIndex, availableColumns, queenCount) {
-    // base case -> if rowIndex is greater than n, or there are no available columns, break out of function
-    // for rooks, both of these conditions should happen at the same time
     if (rowIndex >= n || availableColumns.length === 0) {
       return;
     }
 
-    // for each of the available column indices:
     availableColumns.forEach(function (columnIndex) {
-      // slice passed in matrix so it is not mutated, and can be accessed by all iterations of forEach
-      // set a piece on the matrix at the specified rowIndex and columnIndex
-      // let newMatrix = board.rows().slice();
-      // newMatrix[rowIndex][columnIndex] = 1;
-      let newBoard = new Board(board.rows());
-      newBoard.togglePiece(rowIndex, columnIndex);
-      if (newBoard.hasAnyMajorDiagonalConflicts() || newBoard.hasAnyMinorDiagonalConflicts()) {
+      // let newBoard = new Board(board.rows());
+      board.togglePiece(rowIndex, columnIndex);
+      if (board.hasAnyMajorDiagonalConflicts() || board.hasAnyMinorDiagonalConflicts()) {
+        board.togglePiece(rowIndex, columnIndex);
         return;
-      } 
-      // else {
-      //   let currentCount = queenCount + 1;
-      // }
-      // once it's toggled, check for diagonal conflicts -> reaturn
-      // if not, queenCount++
-      
-      // if it is last row, we know the matrix is now a solution, update count (and push matrix to solutions array if desired)
+      }
       if (rowIndex === n - 1 && queenCount + 1 === n) {
-        // solutions.push(newMatrix);
-        // if queenCount = n...
         solutionCount++;
       }
-
-      // update the array of available columns based on our recently added piece and make recursive call
-      // if we are in the last row, the helper function will return at the beginning of the next recursive call
       let newColumns = availableColumns.slice().filter(index => index !== columnIndex);
-      addQueens(newBoard, rowIndex + 1, newColumns, queenCount + 1);
+      addQueens(board, rowIndex + 1, newColumns, queenCount + 1);
+      board.togglePiece(rowIndex, columnIndex);        
     });
   }
-
-  // call helper function
-    addQueens((new Board({n})), 0, _.range(n), 0); 
-
-
+  addQueens((new Board({n})), 0, _.range(n), 0); 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
